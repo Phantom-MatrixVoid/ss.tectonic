@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plate Movement</title>
+
+<style>
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  text-align: center;
+  font-family: Arial;
+}
+
+.scene {
+  position: relative;
+  height: 350px;
+  background: linear-gradient(to bottom, #0a0f1f 50%, #3a1c0f 50%);
+  overflow: hidden;
+}
+
+/* Plates */
+.plate {
+  position: absolute;
+  top: 150px;
+  width: 50%;
+  height: 120px;
+  background: #555;
+  border-top: 3px solid #ccc;
+  transition: transform 2s ease;
+}
+
+#leftPlate { left: 0; }
+#rightPlate { right: 0; }
+
+/* Mountain (improved realistic growth) */
+.mountain {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%) scaleY(0);
+  transform-origin: bottom;
+  width: 120px;
+  height: 100px;
+  background: linear-gradient(to top, #5a3b1e, #8b5a2b);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  transition: transform 1.8s ease-out, top 1.8s ease-out;
+}
+
+/* Smooth shake */
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(1px, -1px); }
+  40% { transform: translate(-1px, 1px); }
+  60% { transform: translate(1px, 1px); }
+  80% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.shake {
+  animation: shake 0.25s infinite;
+}
+
+button {
+  margin: 15px;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🌍 Tectonic Plate Movement</h2>
+
+<div id="scene" class="scene">
+  <div id="leftPlate" class="plate"></div>
+  <div id="rightPlate" class="plate"></div>
+  <div id="mountain" class="mountain"></div>
+</div>
+
+<button onclick="divergent()">Divergent</button>
+<button onclick="convergent()">Convergent</button>
+
+<script>
+
+function divergent() {
+  scene.classList.add("shake");
+
+  leftPlate.style.transform = "translateX(-120px)";
+  rightPlate.style.transform = "translateX(120px)";
+
+  // remove mountain smoothly
+  mountain.style.transform = "translateX(-50%) scaleY(0)";
+  mountain.style.top = "150px";
+
+  setTimeout(() => {
+    scene.classList.remove("shake");
+  }, 2000);
+}
+
+function convergent() {
+  scene.classList.add("shake");
+
+  leftPlate.style.transform = "translateX(0)";
+  rightPlate.style.transform = "translateX(0)";
+
+  // pressure effect before collision
+  setTimeout(() => {
+    leftPlate.style.transform = "translateX(10px)";
+    rightPlate.style.transform = "translateX(-10px)";
+  }, 1500);
+
+  // stronger shake on collision
+  setTimeout(() => {
+    scene.style.animation = "shake 0.1s infinite";
+  }, 1800);
+
+  // mountain grows upward (realistic)
+  setTimeout(() => {
+    mountain.style.top = "50px";
+    mountain.style.transform = "translateX(-50%) scaleY(1)";
+  }, 2200);
+
+  // stop shaking
+  setTimeout(() => {
+    scene.classList.remove("shake");
+    scene.style.animation = "";
+  }, 3500);
+}
+
+</script>
+
+</body>
+</html>
